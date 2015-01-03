@@ -10,16 +10,19 @@ import numpy as np
 
 '''
 deceleration = f(temps en secondes)
-'''
 
-def fonctionDeceleration(T, V0, tempsMax):
+paramètres:
+- vMax (la vitesse max du véhicule)
+- coef (entre -1 et -50, le nombre de km/h que l'on perd par seconde)
+'''
+def fonctionDeceleration(V0, coef):
     # preparation du df deceleration = f(temps)
-    deceleration = pd.DataFrame(data = np.array(range(tempsMax+1)), index = range(tempsMax+1), columns = ['vitesse'])
+    n = int(np.ceil(- V0 / coef))
+    deceleration = pd.DataFrame(data = np.array(range(n+1)) + 0.0, index = range(n+1), columns = ['vitesse'])
     # calcul de la vitesse
-    deceleration = deceleration.apply(lambda x : np.maximum( 0 , V0 * (1 - x / T)))
+    deceleration = deceleration.apply(lambda x : np.maximum( 0 , V0 + coef * x ))
     return deceleration
 
 # exemple de paramètres
-T = 12 # temps pour s'arrêter depuis V0
-V0 = 100
-tempsMax = 180 # nombre de secondes maximum
+V0 = 200
+coef = -50 # correspond à un freinage d'urgence
