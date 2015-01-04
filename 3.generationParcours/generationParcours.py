@@ -73,7 +73,7 @@ def InstructiontoDistance(subInstruction):
 MarkComma = ","
 MarkValue = ':'
 MarkOpen = '{'; MarkClose = '}'
-api_key="AIzaSyCHm4msRkOxGwmI3qhV-gXOsAKBPcH_IoM"
+api_key=""
 KeySplit = 'travel_mode'
 str_start_location = 'start_location'.encode('utf-8')
 str_duration = 'duration'.encode('utf-8')
