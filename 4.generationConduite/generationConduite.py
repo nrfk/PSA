@@ -20,7 +20,17 @@ from fonctionAcceleration import fonctionAcceleration
 '''
 fonction
 '''
-def generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret):
+def generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret, limites):
+    # ajoute les limitates de vitesse dans le DF
+    route['vitesse'] = route['distance'] / route['duration'] * 3.6
+    route['vitesse_limite'] = route['vitesse'].apply(lambda x : min(x, max(limites)))
+    route['vitesse_limite'] = route['vitesse_limite'].apply(lambda x : min(limites[(limites >= x)]))
+    # ajoute les coordonnées (x, y) en mètres
+    route['x'] = route['lng'] * 111111 # A COMPLETER !!!
+    route['y'] = route['lat'] * 111111 # A COMPLETER !!!
+    # extrait les infos nécessaires
+    route = np.array(route[['x', 'y', 'vitesse_limite']])    
+    
     route[-1, -1] = 0 # change la dernière limite de vitesse pour l'arrêt
     alpha = (route[-1, 1] - route[-2, 1]) / (route[-1, 0] - route[-2, 0])
     x_arret = route[-1, 0] + np.sign(route[-1, 0] - route[-2, 0]) * np.sqrt(d_arret**2 / (alpha**2 + 1))
@@ -111,8 +121,13 @@ vitesseMax = 180
 fact = 1/3.6 # facteur de passage des km/h en m/sec
 d_arret = 300 # distance max pour l'arrêt à la fin du trajet
 # format: [x en mètres, y en mètres, v en kilomètres/h]
-route = np.array([[1, 100, 90],[100,100,130],[100, 200, 50],[150, 200, 50],[100, -50, 50]])
-trajet = generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret)
+#route = np.array([[1, 100, 90],[100,100,130],[100, 200, 50],[150, 200, 50],[100, -50, 50]])
+
+# charge le chemin
+route = pd.DataFrame.from_csv('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/3.generationParcours/SampleOuputStage3.csv', sep = '\t')
+limites = pd.Series([30, 50, 70, 90, 110, 130])
+
+trajet = generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret, limites)
 
 '''
 # pour debugging
