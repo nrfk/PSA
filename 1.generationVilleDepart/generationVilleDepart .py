@@ -45,7 +45,7 @@ class generationVilleDepart():
 for i in range(10):
     res=[]
     C = generationVilleDepart()
-    C.CheminFichier = 'C:\\Users\\Louarradi\\Documents\\ProjetFilRouge\\villes_france.csv'
+    C.CheminFichier = 'villes_france.csv'
     res.append(C.Ret_Coord_csv())
     print(res)
     
