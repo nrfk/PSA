@@ -40,3 +40,11 @@ def distance(a1, b1, a2, b2, type_):
         return math.sqrt((y2 - y1)**2 + (x2 - x1)**2)
     else:
         return -1
+
+def memeZone(longitude1, latitude1, longitude2, latitude2):
+    ville1 = toXY(longitude1, latitude1)
+    ville2 = toXY(longitude2, latitude2)
+    if(ville1[2] == ville2[2] and ville1[3] == ville2[3]):
+        return True
+    else:
+        return False

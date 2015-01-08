@@ -11,11 +11,13 @@ imports et paramètres
 
 import sys
 sys.path.append('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/4.generationConduite/')
+sys.path.append('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/0.fonctions/')
 
 import pandas as pd
 import numpy as np
 from fonctionDeceleration import fonctionDeceleration
 from fonctionAcceleration import fonctionAcceleration
+from fonctions import toXY
 
 '''
 fonction
@@ -26,8 +28,12 @@ def generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret, limites
     route['vitesse_limite'] = route['vitesse'].apply(lambda x : min(x, max(limites)))
     route['vitesse_limite'] = route['vitesse_limite'].apply(lambda x : min(limites[(limites >= x)]))
     # ajoute les coordonnées (x, y) en mètres
-    route['x'] = route['lng'] * 111111 # A COMPLETER !!!
-    route['y'] = route['lat'] * 111111 # A COMPLETER !!!
+    route['x'] = route['lng']
+    route['y'] = route['lat']
+    for ix in range(len(route)):
+        coordXY = toXY(route['lng'].iloc[ix], route['lat'].iloc[ix])
+        route['x'].iloc[ix] = coordXY[0]
+        route['y'].iloc[ix] = coordXY[1]
     # extrait les infos nécessaires
     route = np.array(route[['x', 'y', 'vitesse_limite']])    
     
@@ -113,6 +119,7 @@ def generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret, limites
     trajet = pd.DataFrame(data = np.array((x, y)).T, index = t, columns = ['x', 'y'])
     return trajet
 
+'''
 # exemple:
 T = 12 # temps pour atteindre la vitesse V
 V = 100 
@@ -124,14 +131,19 @@ d_arret = 300 # distance max pour l'arrêt à la fin du trajet
 #route = np.array([[1, 100, 90],[100,100,130],[100, 200, 50],[150, 200, 50],[100, -50, 50]])
 
 # charge le chemin
-route = pd.DataFrame.from_csv('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/3.generationParcours/SampleOuputStage3.csv', sep = '\t')
+route = pd.DataFrame.from_csv('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/3.generationParcours/generationParcours.tsv', sep = '\t')
 limites = pd.Series([30, 50, 70, 90, 110, 130])
 
 trajet = generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret, limites)
+'''
+
 
 '''
 # pour debugging
 from matplotlib import pyplot as plt
+plt.plot(trajet['x'], trajet['y'])
+d = np.sqrt(trajet['x'].diff()**2+trajet['y'].diff()**2)
+sum(d[d > 0])/1000
 
 print('t: ' + str(t[-1]))
 print('t_dec: ' + str(t_dec))

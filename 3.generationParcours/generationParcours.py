@@ -14,13 +14,13 @@ from googlemaps import Client # pip install GoogleMaps, # http://py-googlemaps.s
 import pandas as pd
 
 api_key = "AIzaSyCHm4msRkOxGwmI3qhV-gXOsAKBPcH_IoM"
-routemode='driving'; routealternatives=False; routelanguage='Fr'
 SavetoCsv = True
 
-def generationParcours(latitudeDepart, longitudeDepart, latitudeArrivee, longitudeArrivee, api_key, blnSavetoCSV):
+def generationParcours(longitudeDepart, latitudeDepart, longitudeArrivee, latitudeArrivee, api_key, blnSavetoCSV):
     #Output panda dataframe: #1: lng | #2: lat | #3: distance | #4: duration | #5: vitesse moyenne
     # Liste de listes. Pour chaque liste, 1er élément = latitude, 2e = longitude, 3e = vitesse max    
     # route = [[latitudeDepart, longitudeDepart, 90],[65.000,45.000,130],[latitudeArrivee, longitudeArrivee, 50]]
+    routemode='driving'; routealternatives=False; routelanguage='Fr'
     googlemap = Client(api_key)
     parcours = googlemap.directions((latitudeDepart, longitudeDepart), (latitudeArrivee, longitudeArrivee), mode=routemode, alternatives=routealternatives, language=routelanguage)
     if len(parcours) > 0:
@@ -41,11 +41,12 @@ def generationParcours(latitudeDepart, longitudeDepart, latitudeArrivee, longitu
             ParcoursEtape.append(etape['duration']['value']) # en secondes
             ParcoursEtape.append(vitmoykmh)
             ParcoursEtapes.append(ParcoursEtape)
+        if(blnSavetoCSV == True):
             pd.DataFrame(ParcoursEtapes, columns=('lat', 'lng', 'distance', 'duration', 'vit.moy')).to_csv("generationParcours.csv", sep='\t', encoding='utf-8')
         return pd.DataFrame(ParcoursEtapes, columns=('lat', 'lng', 'distance', 'duration', 'vit.moy') )
     else: return False
         #if ErreurParcours.find("Channel") > 0: print 'None'# ; return 'None'
-    
+
 depart = (50.943571, 1.851318); #print googlemap.reverse_geocode(address) #'78 Rue des Fontinettes, 62100 Calais, France'  #-> lat: 50.943571,  lng: 1.851318 
 destination = (43.293313, 5.371159); #print googlemap.reverse_geocode(destination) #'6-8 Rue Fort Notre Dame, 13001 Marseille' # -> lat: 43.293313, lng: 5.371159
 #destination = (51.023712, 1.405465) #Manche (mer)
@@ -55,4 +56,4 @@ destination = (43.293313, 5.371159); #print googlemap.reverse_geocode(destinatio
 latitudeDepart = depart[0]; longitudeDepart = depart[1]
 latitudeArrivee = destination[0]; longitudeArrivee = destination[1]
 
-print generationParcours(latitudeDepart, longitudeDepart, latitudeArrivee, longitudeArrivee, api_key, SavetoCsv)
+#print generationParcours(latitudeDepart, longitudeDepart, latitudeArrivee, longitudeArrivee, api_key, SavetoCsv)
