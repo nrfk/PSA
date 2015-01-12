@@ -7,6 +7,7 @@ Created on Wed Jan  7 15:56:15 2015
 
 import pandas as pd
 import numpy as np
+import math
 import sys
 directory = '/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/'
 sys.path.append(directory + '0.fonctions')
@@ -49,7 +50,7 @@ limites = pd.Series([30, 50, 70, 90, 110, 130])
 
 # trajet
 trajet = generationConduite(parcours, T, V, tempsMax, vitesseMax, fact, d_arret, limites)
-trajet.to_csv('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/1.generationVilleDepart/test')
+#trajet.to_csv('test')
 
 # paramètres du véhicule:
 alpha = np.array([-0.020, -0.018, -0.016, -0.014, -0.012, -0.010])
@@ -61,4 +62,24 @@ tableauRegime = fonctionRegimemoteurRapport(alpha, vitessesInput, regimesInput, 
 trajet['regimeMoteur'] = tableauRegime.iloc[trajet ['vitesse'].apply(int)]['regime'].values
 
 # 4 - on génère les brulages FAP
+# brûlage si 
+trajet['distance'] = (trajet['x'].diff()**2 + trajet['y'].diff()**2).apply(math.sqrt).cumsum()
+trajet['distance'].fillna(0, inplace = True)
 
+# paramètres du brulage
+distance_brulage = 4 * 1000 # distance entre deux brulages en mètres
+distance_avant_panne = 2.5 * 1000
+vitesseMin_brulage = 25 # vitesse minimum pour un brulage
+tempsMin_brulage = 10 * 60 # durée minimum à la condition de vitesse
+regimeMin_brulage = 2500 # régime minimum
+
+from matplotlib import pyplot as plt
+plt.plot(trajet['vitesse'])
+
+'''
+trajet[trajet['vitesse'] < 50]
+trajet['numeroBrulage'] = trajet['distance'].apply(lambda distance : distance // (distance_brulage + distance_avant_panne) + 1)
+trajet['vitesse']
+8194*6500
+trajet = trajet.append(trajet, ignore_index = True)
+'''
