@@ -20,7 +20,6 @@ import pandas as pd
 import numpy as np
 from fonctionDeceleration import fonctionDeceleration
 from fonctionAcceleration import fonctionAcceleration
-#from fonctionRegimemoteurRapport import fonctionRegimemoteurRapport
 from fonctions import toXY
 
 '''
@@ -42,9 +41,9 @@ def generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret, limites
     route = np.array(route[['x', 'y', 'vitesse_limite']])    
     
     route[-1, -1] = 0 # change la dernière limite de vitesse pour l'arrêt
-    alpha = (route[-1, 1] - route[-2, 1]) / (route[-1, 0] - route[-2, 0])
-    x_arret = route[-1, 0] + np.sign(route[-1, 0] - route[-2, 0]) * np.sqrt(d_arret**2 / (alpha**2 + 1))
-    y_arret = route[-1, 1] + np.sign(route[-1, 1] - route[-2, 1]) * np.sqrt(d_arret**2 / (1/alpha**2 + 1))
+    alpha_ = (route[-1, 1] - route[-2, 1]) / (route[-1, 0] - route[-2, 0])
+    x_arret = route[-1, 0] + np.sign(route[-1, 0] - route[-2, 0]) * np.sqrt(d_arret**2 / (alpha_**2 + 1))
+    y_arret = route[-1, 1] + np.sign(route[-1, 1] - route[-2, 1]) * np.sqrt(d_arret**2 / (1/alpha_**2 + 1))
     route = np.vstack([route, [x_arret, y_arret, 0]]) # ajoute un dernier point à +50 mètres (arrêt)
     
     # initialisation
@@ -135,10 +134,20 @@ d_arret = 300 # distance max pour l'arrêt à la fin du trajet
 #route = np.array([[1, 100, 90],[100,100,130],[100, 200, 50],[150, 200, 50],[100, -50, 50]])
 
 # charge le chemin
-route = pd.DataFrame.from_csv('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/3.generationParcours/generationParcours.tsv', sep = '\t')
+route = pd.DataFrame.from_csv('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/3.generationParcours/generationParcoursShort.tsv', sep = '\t')
 limites = pd.Series([30, 50, 70, 90, 110, 130])
 
 trajet = generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret, limites)
+
+alpha = np.array([-0.020, -0.018, -0.016, -0.014, -0.012, -0.010])
+vitessesInput = np.array([20.0,35.0,55.0,75.0,90.0,110.0])
+regimesInput = np.array([2000.0,2500.0,2500.0,2500.0,2500.0,2500.0])
+regimeChangementrapport = [3000,3000,3000,3000,3000,9000]
+vitesseMax = 200
+
+tableauRegime = fonctionRegimemoteurRapport(alpha, vitessesInput, regimesInput, regimeChangementrapport, vitesseMax)
+regimeMoteur = tableauRegime.iloc[trajet ['vitesse'].apply(int)]['regime']
+
 '''
 
 

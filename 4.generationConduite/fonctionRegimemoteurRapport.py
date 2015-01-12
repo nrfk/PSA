@@ -42,9 +42,11 @@ def fonctionRegimemoteurRapport(alpha, vitessesInput, regimesInput, regimeChange
     
     return pd.DataFrame(data=np.array([regimemoteur,rapport]).T, index=range(vitesseMax+1), columns = ['regime','rapport'])
 
+'''
 # exemples de parametres de forme de chaque rapport et points
 alpha = np.array([-0.020, -0.018, -0.016, -0.014, -0.012, -0.010])
 vitessesInput = np.array([20.0,35.0,55.0,75.0,90.0,110.0])
 regimesInput = np.array([2000.0,2500.0,2500.0,2500.0,2500.0,2500.0])
 regimeChangementrapport = [3000,3000,3000,3000,3000,9000]
 vitesseMax = 200
+'''
