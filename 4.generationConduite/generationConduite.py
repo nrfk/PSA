@@ -9,14 +9,18 @@ Created on Wed Dec 17 15:21:35 2014
 imports et paramètres
 '''
 
+import os
+currentFolder = os.path.dirname(os.path.abspath(__file__))
+
 import sys
-sys.path.append('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/4.generationConduite/')
-sys.path.append('/home/roms/Desktop/Projet fil rouge/Scripts/GitHub/PSA/0.fonctions/')
+sys.path.append(currentFolder)
+sys.path.append('/'.join(currentFolder.split('/')[:-1]) + '/0.fonctions/')
 
 import pandas as pd
 import numpy as np
 from fonctionDeceleration import fonctionDeceleration
 from fonctionAcceleration import fonctionAcceleration
+#from fonctionRegimemoteurRapport import fonctionRegimemoteurRapport
 from fonctions import toXY
 
 '''
@@ -116,7 +120,7 @@ def generationConduite(route, T, V, tempsMax, vitesseMax, fact, d_arret, limites
             x.append(x[-1] + u * np.cos(theta))
             y.append(y[-1] + u * np.sin(theta))
     
-    trajet = pd.DataFrame(data = np.array((x, y)).T, index = t, columns = ['x', 'y'])
+    trajet = pd.DataFrame(data = np.array((x, y, v)).T, index = t, columns = ['x', 'y', 'vitesse'])
     return trajet
 
 '''
